@@ -6,8 +6,10 @@ Yii Framework 2 Change Log
 
 - Bug #9027: Fixed descendant class of `yii\web\UploadedFile` returns parent instances in case invoked after it (andrewnester)
 - Bug #12428: Fixed `yii\db\mysql\QueryBuilder` causes warning when insert default rows into a table without primary key (DrmagicE)
+- Enh #6996: Added `yii\web\MultipartFormDataParser`, which allows proper processing of 'multipart/form-data' encoded non POST requests (klimov-paul)
 - Enh #9989: ActiveForm now respects formtarget, formmethod and formenctype attributes of submit button (AnatolyRugalev)
 - Enh #12296: Added value validation to `yii\log\Target::setLevels()` (Mak-Di)
+- Enh #12193: Added the ability to suppress the generation of duplicate error messages in `Html::errorSummary`. Added the ability to display error messages beyond the first error for each model attribute (PowerGamer1)
 - Enh #12073: Added the ability to suppress the generation of input hint when it is specified through  `Model::attributeHints()` (PowerGamer1)
 - Bug #7670: Added `UrlNormalizer` for normalizing requests with and without trailing slashes (rob006, cronfy, klimov-paul)
 - Bug #9277: Fixed `yii\console\controllers\AssetController` looses custom options of 'target' bundles (petrabarus, klimov-paul)
@@ -33,8 +35,10 @@ Yii Framework 2 Change Log
 - Bug #11715: Fixed JS validation when the same model's attribute file input is listed more than once on the same page (uaoleg)
 - Bug #11541: Fixed default MySQL integer display width for unsigned primary key (h311ion, rob006, cebe)
 - Bug #12143: Fixed `yii\db\BaseActiveRecord::updateAttributes()` change `isNewRecord` state for the new model (klimov-paul)
+- Bug #12463: Fixed `yii\web\Request::getBodyParams()` does not pass full 'content-type' value to `yii\web\RequestParserInterface::parse()` (klimov-paul)
 - Enh #9708: Added `yii\console\controllers\AssetController::deleteSource` option allowing deletion of the source asset files after compression (pana1990, klimov-paul)
 - Enh #10243: Added `yii\data\Sort::setAttributeOrders()` method allowing manual setup of current sort (klimov-paul)
+- Enh #12440: Added `yii\base\Event::offAll()` method allowing clear all registered class-level event handlers (klimov-paul)
 - Enh #10583: Do not silence session errors in debug mode (samdark)
 - Enh #11658: Added argument to `yii\grid\ActionColumn::urlCreator` callback, which holds reference to the column instance (klimov-paul)
 - Enh #11804: Added `yii\behaviors\AttributeTypecastBehavior` for maintaining of strict ActiveRecord attribute types (klimov-paul)
@@ -56,6 +60,7 @@ Yii Framework 2 Change Log
 - Bug #12431: Fix bug when lock file was not removed after `yii\mutex\FileMutex::release()` (rob006)
 - Enh: Method `yii\console\controllers\AssetController::getAssetManager()` automatically enables `yii\web\AssetManager::forceCopy` in case it is not explicitly specified (pana1990, klimov-paul)
 - Enh #12382: Changed `yii\widgets\MaskedInput` to use `jQuery` instead of `$` to prevent conflicts (samdark)
+- Bug #12446: Disable slaves when execute migrations to resolve master-slave replication no-sync (lichunqiang)
 
 
 2.0.9 July 11, 2016

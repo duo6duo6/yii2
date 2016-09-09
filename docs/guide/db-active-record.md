@@ -1335,12 +1335,12 @@ You can use most of the relational query features that have been described in th
 By default, all Active Record queries are supported by [[yii\db\ActiveQuery]]. To use a customized query class
 in an Active Record class, you should override the [[yii\db\ActiveRecord::find()]] method and return an instance
 of your customized query class. For example,
- 
+
 ```php
+// file Comment.php
 namespace app\models;
 
 use yii\db\ActiveRecord;
-use yii\db\ActiveQuery;
 
 class Comment extends ActiveRecord
 {
@@ -1349,42 +1349,49 @@ class Comment extends ActiveRecord
         return new CommentQuery(get_called_class());
     }
 }
-
-class CommentQuery extends ActiveQuery
-{
-    // ...
-}
 ```
 
-Now whenever you are performing a query (e.g. `find()`, `findOne()`) or defining a relation (e.g. `hasOne()`) 
-with `Comment`, you will be working with an instance of `CommentQuery` instead of `ActiveQuery`.
+Now whenever you are performing a query (e.g. `find()`, `findOne()`) or defining a relation (e.g. `hasOne()`)
+with `Comment`, you will be calling an instance of `CommentQuery` instead of `ActiveQuery`.
 
-> Tip: In big projects, it is recommended that you use customized query classes to hold most query-related code
-  so that the Active Record classes can be kept clean.
-
-You can customize a query class in many creative ways to improve your query building experience. For example,
-you can define new query building methods in a customized query class: 
+You now have to define the `CommentQuery` class, which can be customized in many creative ways to improve your query building experience. For example,
 
 ```php
+// file CommentQuery.php
+namespace app\models;
+
+use yii\db\ActiveQuery;
+
 class CommentQuery extends ActiveQuery
 {
+    // conditions appended by default (can be skipped)
+    public function init()
+    {
+        $this->andOnCondition(['deleted' => false]);
+        parent::init();
+    }
+
+    // ... add customized query methods here ...
+
     public function active($state = true)
     {
-        return $this->andWhere(['active' => $state]);
+        return $this->andOnCondition(['active' => $state]);
     }
 }
 ```
 
-> Note: Instead of calling [[yii\db\ActiveQuery::where()|where()]], you usually should call
-  [[yii\db\ActiveQuery::andWhere()|andWhere()]] or [[yii\db\ActiveQuery::orWhere()|orWhere()]] to append additional
-  conditions when defining new query building methods so that any existing conditions are not overwritten.
+> Note: Instead of calling [[yii\db\ActiveQuery::onCondition()|onCondition()]], you usually should call
+  [[yii\db\ActiveQuery::andOnCondition()|andOnCondition()]] or [[yii\db\ActiveQuery::orOnCondition()|orOnCondition()]] to append additional conditions when defining new query building methods so that any existing conditions are not overwritten.
 
 This allows you to write query building code like the following:
- 
+
 ```php
 $comments = Comment::find()->active()->all();
 $inactiveComments = Comment::find()->active(false)->all();
 ```
+
+> Tip: In big projects, it is recommended that you use customized query classes to hold most query-related code
+  so that the Active Record classes can be kept clean.
 
 You can also use the new query building methods when defining relations about `Comment` or performing relational query:
 
@@ -1397,11 +1404,18 @@ class Customer extends \yii\db\ActiveRecord
     }
 }
 
-$customers = Customer::find()->with('activeComments')->all();
+$customers = Customer::find()->joinWith('activeComments')->all();
 
 // or alternatively
- 
-$customers = Customer::find()->with([
+class Customer extends \yii\db\ActiveRecord
+{
+    public function getComments()
+    {
+        return $this->hasMany(Comment::className(), ['customer_id' => 'id']);
+    }
+}
+
+$customers = Customer::find()->joinWith([
     'comments' => function($q) {
         $q->active();
     }
